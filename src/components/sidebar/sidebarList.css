@@ -1,0 +1,37 @@
+/* nav sidebar */
+.nav-sidebar.mobile {
+  width: 0;
+  transform: translateX(-300px);
+  height: 100vh;
+  transition: all .2s;
+}
+
+.nav-sidebar.desktop {
+  display: none;
+}
+
+/* media query for nav sidebar */
+@media (min-width: 1200px) {
+  .nav-sidebar.mobile {
+    display: none;
+  }
+  .nav-sidebar.desktop {
+    display: block;
+    width: 300px;
+  }
+}
+
+.nav-sidebar .nav-link-wrap {
+  display: block;
+  padding: 15px;
+  transition: all .1s;
+  cursor: pointer;
+}
+
+.nav-sidebar .nav-link-wrap:hover {
+  background: #161C25;
+}
+
+.nav-sidebar .nav-link-wrap span {
+  padding-left: 15px;
+}

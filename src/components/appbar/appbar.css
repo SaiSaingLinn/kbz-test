@@ -1,0 +1,19 @@
+/* appbar */
+.app-bar .top-app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-bar .toggle-menu {
+  display: block;
+}
+
+/* media query for toggle menu */
+@media (min-width: 1200px) {
+  .app-bar .top-app-bar {
+    justify-content: flex-end;
+  }
+  .app-bar .toggle-menu {
+    display: none;
+  }
+}
