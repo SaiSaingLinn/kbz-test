@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Button from '../../components/button';
 import colors from '../../components/colors';
 import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md';
+import { auth } from '../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { authStore } from '../../services';
+import { home } from '../../store/action';
 
 const AuthWrapper = {
   backgroundColor: '#FFF',
@@ -21,12 +25,19 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const dispatch = useDispatch()
+  const history = useHistory()
+
+  // if user already login go to home page
+  useEffect(() => {
+    const authData = authStore.getAuth();
+    authData && history.push('/')
+  }, [history])
+  
 
   // form validation schema
   const validationSchema = yup.object().shape({
-    email: yup.string()
-      .max(25, 'Too Long!')
-      .required('Please enter your name'),
+    email: yup.string().email()
+      .required('Please enter your email'),
     password: yup.string()
       .min(8, 'Password must be at least 8 characters')
       .required('Please enter your password'),
@@ -44,21 +55,27 @@ export default function Login() {
     },
   });
 
-  // async function submit form 
+  // login submit form 
   const submitLogin = async (values) => {
     setLoading(true);
+    signInWithEmailAndPassword(auth, values.email, values.password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      dispatch(home.setLoginStore('SET_LOGIN', user))
+      setError(false);
+      history.push('/')
+    })
+    .catch((error) => {
+      setError(true);
+    });
+    setLoading(false);
   }
 
   return (
     <section style={{background: colors.primary, width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
       <div style={AuthWrapper}>
           <h1>Signin</h1>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <p style={{paddingRight: '5px'}}>Don't have an account?</p>
-            <Link to="/register">
-              <span>Register here</span>
-            </Link>
-          </div>
           <form onSubmit={formik.handleSubmit} style={{width: '100%'}}>
             <div className={`input-group ${formik.touched.email && Boolean(formik.errors.email) ? 'error' : ''}`}>
               <span className='input-group-icon'><MdOutlineEmail /></span>
@@ -74,7 +91,7 @@ export default function Login() {
               />
               {
                 formik.touched.email && formik.errors.email && (
-                  <span id="name-error-text">{formik.errors.email}</span>
+                  <div className="error-text">{formik.errors.email}</div>
                 )
               }
             </div>
@@ -87,17 +104,17 @@ export default function Login() {
                 label="Password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                className={`form-control ${formik.touched.email && Boolean(formik.errors.email) ? 'error' : ''}`}
+                className={`form-control ${formik.touched.password && Boolean(formik.errors.password) ? 'error' : ''}`}
                 placeholder="Password"
               />
               {
                 formik.touched.password && formik.errors.password && (
-                  <span id="password-error-text">{formik.errors.password}</span>
+                  <div className="error-text">{formik.errors.password}</div>
                 )
               }
             </div>
             <div>
-              <Button color="primary" type="submit">Signin</Button>
+              <Button color="primary" type="submit" disabled={loading}>Signin</Button>
               {
                 error && (
                   <p>Something was wrong, please try again!</p>
@@ -105,7 +122,6 @@ export default function Login() {
               }
             </div>
           </form>
-        
       </div>
     </section>
   );

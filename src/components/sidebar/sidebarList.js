@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { FaUserFriends } from 'react-icons/fa'
 import { MdAddCircleOutline } from 'react-icons/md'
 import { BiUserCircle } from 'react-icons/bi'
@@ -42,20 +42,20 @@ export default function SidebarList() {
             <h5 style={{textTransform: 'uppercase', padding: '0 15px'}}>Navigation</h5>
             <ul style={{color: '#FFF', listStyle: 'none', padding: 0, margin: 0}}>
               <li>
-                <Link to="/" style={{background: '#161C25'}} className="nav-link-wrap">
+                <NavLink to="/" className="nav-link-wrap">
                   <div style={navLink}>
                     <FaUserFriends /> 
                     <span className='nav-text'>Customers</span>
                   </div>
-                </Link>
+                </NavLink>
               </li>    
               <li>
-                <Link to="/" className="nav-link-wrap">
+                <NavLink to="/addCustomer" className="nav-link-wrap">
                   <div style={navLink}>
                     <MdAddCircleOutline /> 
                     <span className='nav-text'>Add New Customer</span>
                   </div>
-                </Link>
+                </NavLink>
               </li>
               <li>
                 <div className="nav-link-wrap">

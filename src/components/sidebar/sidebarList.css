@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.nav-sidebar .nav-link-wrap:hover {
+.nav-sidebar .nav-link-wrap:hover, .nav-sidebar .nav-link-wrap.active {
   background: #161C25;
 }
 

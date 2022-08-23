@@ -1,10 +1,43 @@
-import React from 'react'
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppBar from '../../components/appbar'
 import Button from '../../components/button'
 import Sidebar from '../../components/sidebar'
+import { db } from '../../firebase'
 
 export default function Home() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // fetch data from firebase
+    const fetchData = async () => {
+      let list = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "customers"));
+        querySnapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setData(list);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // handle delete
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "customers", id));
+      setData(data?.filter((item) => item.id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  console.log('data', data)
+
   return (
     <section>
       <div className="container">
@@ -28,7 +61,6 @@ export default function Home() {
                   <table className="table">
                     <thead>
                       <tr>
-                        
                         <th scope="col">Photo</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
@@ -40,41 +72,34 @@ export default function Home() {
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                      </tr>
-                      <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                      </tr>
-                      <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                      </tr>
-                    </tbody>
+                    {
+                      data?.length > 0 &&
+                      <tbody>
+                        {
+                          data?.length > 0 &&
+                          data?.map((x, i) => {
+                            return(
+                            <tr key={i}>
+                              <td>
+                                <img src={x?.photo} alt={x?.name} style={{width: '50px', height: '50px'}} />
+                              </td>
+                              <td>{x?.name}</td>
+                              <td>{x?.email}</td>
+                              <td>{x?.phone}</td>
+                              <td>{x?.birthday}</td>
+                              <td>{x?.gender}</td>
+                              <td>{x?.nrc}</td>
+                              <td>{x?.timeStamp?.seconds}</td>
+                              <td>
+                                <Button color="edit" type="button">Edit</Button>
+                                <Button color="delete" type="button" onClick={() => handleDelete(x?.id)}>Delete</Button>
+                              </td>
+                            </tr>
+                            )
+                          })
+                        }
+                      </tbody>
+                    }
                   </table>
                 </div>
             </div>

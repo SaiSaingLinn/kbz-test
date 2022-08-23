@@ -26,8 +26,10 @@ const buttonSecondary = {
 }
 
 export default function Button(props) {
+  console.log('props', props)
   return (
     <button 
+      disabled={props?.disabled}
       style={
         props?.color === "primary" ? 
         buttonPrimary :
