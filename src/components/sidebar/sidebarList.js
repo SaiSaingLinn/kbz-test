@@ -3,6 +3,8 @@ import { Link, NavLink } from 'react-router-dom'
 import { FaUserFriends } from 'react-icons/fa'
 import { MdAddCircleOutline } from 'react-icons/md'
 import { BiUserCircle } from 'react-icons/bi'
+import { useDispatch, useSelector } from 'react-redux'
+import { home } from '../../store/action'
 
 const navStyle = {
   width: 300,
@@ -32,6 +34,12 @@ const navLink = {
 }
 
 export default function SidebarList() {
+  const dispatch = useDispatch();
+  const { toggle_state } = useSelector(state => state.home);
+  const toggleMenu = () => {
+    // if toggle false set to true and if ture set to false
+    !toggle_state ? dispatch(home.setHomeStore('SET_TOGGLE', true))  : dispatch(home.setHomeStore('SET_TOGGLE', false))
+  }
   return (
     <div className='nav-wrap'>
         <div style={navStyle}>
@@ -42,7 +50,7 @@ export default function SidebarList() {
             <h5 style={{textTransform: 'uppercase', padding: '0 15px'}}>Navigation</h5>
             <ul style={{color: '#FFF', listStyle: 'none', padding: 0, margin: 0}}>
               <li>
-                <NavLink to="/" className="nav-link-wrap">
+                <NavLink to="/" className="nav-link-wrap" onClick={() => toggleMenu()}>
                   <div style={navLink}>
                     <FaUserFriends /> 
                     <span className='nav-text'>Customers</span>
@@ -50,7 +58,7 @@ export default function SidebarList() {
                 </NavLink>
               </li>    
               <li>
-                <NavLink to="/addCustomer" className="nav-link-wrap">
+                <NavLink to="/addCustomer" className="nav-link-wrap" onClick={() => toggleMenu()}>
                   <div style={navLink}>
                     <MdAddCircleOutline /> 
                     <span className='nav-text'>Add New Customer</span>
@@ -58,11 +66,11 @@ export default function SidebarList() {
                 </NavLink>
               </li>
               <li>
-                <div className="nav-link-wrap">
-                <div style={navLink}>
-                  <BiUserCircle /> 
-                  <span className='nav-text'>Logout</span>
-                </div>
+                <div className="nav-link-wrap" onClick={() => toggleMenu()}>
+                  <div style={navLink}>
+                    <BiUserCircle /> 
+                    <span className='nav-text'>Logout</span>
+                  </div>
                 </div>
               </li>
             </ul>

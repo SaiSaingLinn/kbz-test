@@ -1,13 +1,14 @@
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import AppBar from '../../components/appbar'
-import Button from '../../components/button'
 import Sidebar from '../../components/sidebar'
 import { db } from '../../firebase'
 
 export default function Home() {
   const [data, setData] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
     // fetch data from firebase
@@ -36,14 +37,28 @@ export default function Home() {
     }
   }
 
-  console.log('data', data)
+  // handle edit
+  const handleEdit = async (id) => {
+    history.push(`/addCustomer?id=${id}`)
+  }
+
+  // handle search
+  const handleSearch = (e) => {
+    const searchVal = e.target.value
+    console.log('e', e.target.value)
+    const filtered = data !== null && data?.filter(entry => Object.values(entry).some(val => typeof val === "string" && val.includes(searchVal)));
+    console.log('filtered', filtered)
+    setData(filtered)
+  }
+
+  // console.log('data', data)
 
   return (
     <section>
       <div className="container">
         <div style={{display: 'flex'}}>
           <Sidebar />
-          <div className="content" style={{width: '100%', height: '100vh', background: '#EEF1F7'}}>
+          <div className="content" style={{width: '100%', background: '#EEF1F7'}}>
             <AppBar />
             <div 
               className='content-body' 
@@ -56,6 +71,9 @@ export default function Home() {
               >
                 <div className="title">
                   <h4 style={{color: '#666'}}>Customers</h4>
+                </div>
+                <div className='search'>
+                  <input type="text" onChange={(e) => handleSearch(e)} />
                 </div>
                 <div className="table-responsive">
                   <table className="table">
@@ -81,18 +99,18 @@ export default function Home() {
                             return(
                             <tr key={i}>
                               <td>
-                                <img src={x?.photo} alt={x?.name} style={{width: '50px', height: '50px'}} />
+                                <img src={x?.photo} alt={x?.name} style={{width: '50px'}} />
                               </td>
                               <td>{x?.name}</td>
                               <td>{x?.email}</td>
                               <td>{x?.phone}</td>
-                              <td>{x?.birthday}</td>
+                              <td>{x?.dob}</td>
                               <td>{x?.gender}</td>
                               <td>{x?.nrc}</td>
-                              <td>{x?.timeStamp?.seconds}</td>
+                              <td>{moment(x?.timeStamp?.seconds).format('MMMM Do YYYY, h:mm:ss a')}</td>
                               <td>
-                                <Button color="edit" type="button">Edit</Button>
-                                <Button color="delete" type="button" onClick={() => handleDelete(x?.id)}>Delete</Button>
+                                <button className='edit sm' type="button" onClick={() => handleEdit(x?.id)}>Edit</button>
+                                <button className='delete sm' type='button' onClick={() => handleDelete(x?.id)}>Delete</button>
                               </td>
                             </tr>
                             )

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Field, useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import AppBar from '../../components/appbar'
-import Button from '../../components/button'
 import Sidebar from '../../components/sidebar'
 import colors from '../../components/colors';
 import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md';
@@ -12,16 +11,45 @@ import { auth, db, storage } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { authStore } from '../../services';
 import { home } from '../../store/action';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 export default function AddCustomer() {
+  const [data, setData] = useState(null);
   const [file, setFile] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
-  const dispatch = useDispatch()
-  const history = useHistory()
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [gender, setGender] = useState("Male")
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation().search;
+  const id = new URLSearchParams(location).get("id");
+
+  // auto fill form for edit
+  useEffect(() => {
+    // fetch data from firebase
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, "customers", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setData(docSnap.data())
+          setPhotoURL(docSnap.data().photo)
+          setGender(docSnap.data().gender)
+        } else {
+          // doc.data() will be undefined in this case
+          setData(null)
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log('data', data)
+
   // upload photo
   useEffect(() => {
     const uploadFile = () => {
@@ -84,17 +112,18 @@ export default function AddCustomer() {
   const formik = useFormik({
     initialValues: {
       // photo: photoURL && '',
-      email: '',
-      password: '',
-      confirmpass: '',
-      name: '',
-      phone: '',
-      dob: '',
-      nrc1: '1',
-      nrc2: 'AHGAYA',
-      nrc3: 'N',
-      nrcNumber: '',
+      email: data !== null ? data?.email : '',
+      password: data !== null ? data?.password : '',
+      confirmpass: data !== null ? data?.confirmpass : '',
+      name: data !== null ? data?.name : '',
+      phone: data !== null ? data?.phone : '',
+      dob: data !== null ? data?.dob : '',
+      nrc1: data !== null ? data?.nrc1 : '1',
+      nrc2: data !== null ? data?.nrc2 : 'AHGAYA',
+      nrc3: data !== null ? data?.nrc3 : 'N',
+      nrcNumber: data !== null ? data?.nrcNumber : '',
     },
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       submitNewCustomer(values);
@@ -102,7 +131,6 @@ export default function AddCustomer() {
   });
 
   // gender change
-  const [gender, setGender] = useState("Male")
   const handleGenderChange = e => {
     setGender(e.target.value);
   }
@@ -113,17 +141,28 @@ export default function AddCustomer() {
     const mergeNrc = `${values.nrc1}/${values.nrc2}(${values.nrc3})${values.nrcNumber}`;
     setLoading(true);
     try {
-      await addDoc(collection(db, "customers"), {
-        ...values,
-        timeStamp: serverTimestamp(),
-        photo: photoURL,
-        gender,
-        nrc: mergeNrc,
-      });
+      if (data !== null) {
+        await setDoc(doc(db, "customers", id), {
+          ...values,
+          timeStamp: serverTimestamp(),
+          photo: photoURL,
+          gender,
+          nrc: mergeNrc,
+        });
+      } else {
+        await addDoc(collection(db, "customers"), {
+          ...values,
+          timeStamp: serverTimestamp(),
+          photo: photoURL,
+          gender,
+          nrc: mergeNrc,
+        });
+      }
       setError(false)
       history.push('/')
     } catch (err) {
       setError(true)
+      console.log('err', err)
     }
     setLoading(false);
   }
@@ -132,7 +171,7 @@ export default function AddCustomer() {
       <div className="container">
         <div style={{display: 'flex'}}>
           <Sidebar />
-          <div className="content" style={{width: '100%', height: '100vh', background: '#EEF1F7'}}>
+          <div className="content" style={{width: '100%', background: '#EEF1F7'}}>
             <AppBar />
             <div 
               className='content-body' 
@@ -148,15 +187,29 @@ export default function AddCustomer() {
                   <div className={`input-group ${error ? 'error' : ''}`}>
                     <label htmlFor='photo'>Photo</label>
                     <div className='form-control-wrap'>
-                      <input
-                        className={`form-control ${error ? 'error' : ''}`}
-                        id="photo"
-                        type="file"
-                        name="photo"
-                        accept='image/*'
-                        value={formik.values.photo}
-                        onChange={(e) => setFile(e.target.files[0])}
-                      />
+                      {
+                        photoURL !== "" ?
+                        <div>
+                          <img src={photoURL} alt="profile" style={{width: '100px'}} />
+                          <input
+                            className={`form-control ${error ? 'error' : ''}`}
+                            id="photo"
+                            type="file"
+                            name="photo"
+                            accept='image/*'
+                            onChange={(e) => setFile(e.target.files[0])}
+                          />
+                        </div>
+                        :
+                        <input
+                          className={`form-control ${error ? 'error' : ''}`}
+                          id="photo"
+                          type="file"
+                          name="photo"
+                          accept='image/*'
+                          onChange={(e) => setFile(e.target.files[0])}
+                        />
+                      }
                       
                       {
                         error && (
@@ -362,7 +415,7 @@ export default function AddCustomer() {
                     </div>
                   </div>
                   <div>
-                    <Button color="primary" type="submit" disabled={loading}>Submit</Button>
+                    <button className="primary" type="submit" disabled={loading}>Submit</button>
                     {
                       error && (
                         <p>Something was wrong, please try again!</p>

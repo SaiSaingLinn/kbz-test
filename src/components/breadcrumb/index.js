@@ -1,7 +1,9 @@
 import React from 'react'
 import { IoIosArrowForward } from 'react-icons/io'
+import { NavLink, useLocation } from 'react-router-dom'
 
 export default function Breadcrumb() {
+  const location = useLocation();
   return (
     <div className="breadcrumb" 
       style={{
@@ -23,7 +25,7 @@ export default function Breadcrumb() {
           fontSize: '12px',
           color: '#666'
         }}>
-          <li><span>Dashboard</span></li>
+          <li><span><NavLink to="/">Dashboard</NavLink></span></li>
           <li style={{
             display: "flex",
             userSelect: "none",
@@ -31,7 +33,7 @@ export default function Breadcrumb() {
             marginRight: "8px",
           }}><IoIosArrowForward />
           </li>
-          <li><span>Customers</span></li>
+          <li>{location.pathname === "/" ? <span>Customer</span> : <span>Add Customer</span>}</li>
         </ol>
       </nav>
     </div>

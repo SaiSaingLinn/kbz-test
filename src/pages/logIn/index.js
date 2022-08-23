@@ -3,7 +3,6 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import Button from '../../components/button';
 import colors from '../../components/colors';
 import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md';
 import { auth } from '../../firebase';
@@ -114,7 +113,7 @@ export default function Login() {
               }
             </div>
             <div>
-              <Button color="primary" type="submit" disabled={loading}>Signin</Button>
+              <button className='primary' type="submit" disabled={loading}>Signin</button>
               {
                 error && (
                   <p>Something was wrong, please try again!</p>

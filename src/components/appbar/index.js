@@ -35,7 +35,7 @@ export default function AppBar() {
               <FaUserCircle style={{fontSize: 40}} />
             </div>
             <div className="profile-name" style={{display: 'flex', flexDirection: 'column'}}>
-              <span style={{fontSize: '14px', marginBottom: '3px'}}>John Doe</span>
+              <span style={{fontSize: '14px', marginBottom: '3px'}}>Admin</span>
               <span style={{fontSize: '10px', color: '#666'}}>Administrator</span>
             </div>
           </div>
