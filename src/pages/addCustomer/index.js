@@ -166,6 +166,8 @@ export default function AddCustomer() {
     }
     setLoading(false);
   }
+
+  console.log('new Date().', new Date().toJSON().slice(0, 10))
   return (
     <section>
       <div className="container">
@@ -318,6 +320,7 @@ export default function AddCustomer() {
                         name="dob"
                         value={formik.values.dob}
                         onChange={formik.handleChange}
+                        max={new Date().toJSON().slice(0, 10)}
                       />
                       {
                         formik.touched.dob && formik.errors.dob && (
@@ -414,13 +417,16 @@ export default function AddCustomer() {
                       </label>
                     </div>
                   </div>
-                  <div>
-                    <button className="primary" type="submit" disabled={loading}>Submit</button>
-                    {
-                      error && (
-                        <p>Something was wrong, please try again!</p>
-                      )
-                    }
+                  <div className={`input-group`}>
+                    <label></label>
+                    <div className='form-control-wrap'>
+                      <button className="primary" type="submit" disabled={loading}>Submit</button>
+                      {
+                        error && (
+                          <p>Something was wrong, please try again!</p>
+                        )
+                      }
+                    </div>
                   </div>
                 </form>
               </div>
