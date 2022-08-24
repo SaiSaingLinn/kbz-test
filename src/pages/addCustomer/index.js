@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Field, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import AppBar from '../../components/appbar'
 import Sidebar from '../../components/sidebar'
-import colors from '../../components/colors';
-import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md';
-import { auth, db, storage } from '../../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { authStore } from '../../services';
-import { home } from '../../store/action';
-import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
+import { db, storage } from '../../firebase';
+import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 export default function AddCustomer() {
@@ -21,7 +15,6 @@ export default function AddCustomer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [gender, setGender] = useState("Male")
-  const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation().search;
   const id = new URLSearchParams(location).get("id");
@@ -47,8 +40,7 @@ export default function AddCustomer() {
       }
     };
     fetchData();
-  }, []);
-  console.log('data', data)
+  }, [id]);
 
   // upload photo
   useEffect(() => {
@@ -167,7 +159,6 @@ export default function AddCustomer() {
     setLoading(false);
   }
 
-  console.log('new Date().', new Date().toJSON().slice(0, 10))
   return (
     <section>
       <div className="container">
@@ -423,7 +414,7 @@ export default function AddCustomer() {
                       <button className="primary" type="submit" disabled={loading}>Submit</button>
                       {
                         error && (
-                          <p>Something was wrong, please try again!</p>
+                          <p className='error-text'>Something was wrong, please try again!</p>
                         )
                       }
                     </div>

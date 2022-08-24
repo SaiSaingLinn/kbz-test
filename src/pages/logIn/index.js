@@ -1,24 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import colors from '../../components/colors';
 import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md';
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { authStore } from '../../services';
 import { home } from '../../store/action';
-
-const AuthWrapper = {
-  backgroundColor: '#FFF',
-  width: '100%',
-  maxWidth: '400px',
-  margin: '0 auto',
-  padding: '100px 50px',
-  textAlign: 'center',
-  borderRadius: '0.375rem',
-}
+import './login.css';
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
@@ -67,16 +58,17 @@ export default function Login() {
     })
     .catch((error) => {
       setError(true);
+      console.log('error', error)
     });
     setLoading(false);
   }
 
   return (
     <section style={{background: colors.primary, width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      <div style={AuthWrapper}>
+      <div className='auth-wrapper'>
           <h1>Signin</h1>
           <form onSubmit={formik.handleSubmit} style={{width: '100%'}}>
-            <div className={`input-group ${formik.touched.email && Boolean(formik.errors.email) ? 'error' : ''}`}>
+            <div className={`input-group login-input-group ${formik.touched.email && Boolean(formik.errors.email) ? 'error' : ''}`}>
               <span className='input-group-icon'><MdOutlineEmail /></span>
               <input
                 className={`form-control ${formik.touched.email && Boolean(formik.errors.email) ? 'error' : ''}`}
@@ -88,13 +80,14 @@ export default function Login() {
                 onChange={formik.handleChange}
                 placeholder="Email Address"
               />
-              {
+              
+            </div>
+            {
                 formik.touched.email && formik.errors.email && (
-                  <div className="error-text">{formik.errors.email}</div>
+                  <div className="error-text" style={{marginBottom: '1rem'}}>{formik.errors.email}</div>
                 )
               }
-            </div>
-            <div className={`input-group ${formik.touched.password && Boolean(formik.errors.password) ? 'error' : ''}`}>
+            <div className={`input-group login-input-group ${formik.touched.password && Boolean(formik.errors.password) ? 'error' : ''}`}>
               <span className='input-group-icon'><MdOutlineLock /></span>
               <input
                 id="password"
@@ -106,17 +99,17 @@ export default function Login() {
                 className={`form-control ${formik.touched.password && Boolean(formik.errors.password) ? 'error' : ''}`}
                 placeholder="Password"
               />
-              {
-                formik.touched.password && formik.errors.password && (
-                  <div className="error-text">{formik.errors.password}</div>
-                )
-              }
             </div>
+            {
+              formik.touched.password && formik.errors.password && (
+                <div className="error-text" style={{marginBottom: '1rem'}}>{formik.errors.password}</div>
+              )
+            }
             <div>
               <button className='primary' type="submit" disabled={loading}>Signin</button>
               {
                 error && (
-                  <p>Something was wrong, please try again!</p>
+                  <p className='error-text' style={{textAlign: 'center'}}>Invalid Email or Password!</p>
                 )
               }
             </div>

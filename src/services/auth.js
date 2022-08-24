@@ -14,7 +14,14 @@ const getAuth = () => {
   return decryptedData
 }
 
+const removeAuth = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('auth_store')
+  }
+}
+
 export default {
   setAuth,
-  getAuth
+  getAuth,
+  removeAuth
 }

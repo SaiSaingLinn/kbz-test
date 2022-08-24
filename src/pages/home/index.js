@@ -1,8 +1,7 @@
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
-import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import AppBar from '../../components/appbar'
 import Table from '../../components/dataTable'
 import Sidebar from '../../components/sidebar'
@@ -34,7 +33,7 @@ export default function Home() {
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "customers", id));
-      setData(data?.filter((item) => item.id !== id));
+      setData(data?.filter((item) => item?.id !== id));
     } catch (err) {
       console.log(err);
     }
@@ -44,7 +43,7 @@ export default function Home() {
   const handleEdit = async (id) => {
     history.push(`/addCustomer?id=${id}`)
   }
-
+  
   const clickhandler = async (key, id) => {
     if (key === 'edit') {
       await handleEdit(id)
@@ -96,8 +95,6 @@ export default function Home() {
                   <div className='date-input-wrap'>
                     <ReactDatePicker className='form-control' placeholderText='start date' selected={startDate} onChange={(date) => setStartDate(date)} />
                     <ReactDatePicker className='form-control' placeholderText='end date' selected={endDate} onChange={(date) => setEndDate(date)} />
-                    {/* <input className='form-control' type="date" onChange={(e) => {setStartDate(e.target.value)}} /> */}
-                    {/* <input className='form-control' type="date" onChange={(e) => {setEndDate(e.target.value)}} /> */}
                   </div>
                   <div className='date-btn'>
                     <button onClick={() => handleDateFilter()} className="primary">Search</button>

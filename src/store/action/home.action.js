@@ -15,7 +15,12 @@ const setLoginStore = (type, data) => {
   })
 }
 
+const setLogout = () => async dispatch => {
+  authStore.removeAuth()
+}
+
 export const home = {
   setHomeStore,
-  setLoginStore
+  setLoginStore,
+  setLogout
 }

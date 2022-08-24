@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { MdMenu, MdClose } from 'react-icons/md'
 import { FaUserCircle } from 'react-icons/fa'
 import Breadcrumb from '../breadcrumb'

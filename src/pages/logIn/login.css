@@ -1,0 +1,16 @@
+.auth-wrapper {
+  background: #FFF;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 100px 50px;
+  text-align: center;
+  border-radius: 0.375rem;
+}
+
+@media (max-width: 1199px) {
+  .auth-wrapper {
+    max-width: 250px;
+    padding: 50px 30px;
+  }
+}

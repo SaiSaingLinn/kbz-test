@@ -8,7 +8,7 @@ const Table = props => {
     {
       name: "Photo",
       cell: (row) => {
-        return <div><img width={50} src={row.photo} /></div>
+        return <div><img width={50} src={row.photo} alt="profile" /></div>
       },
       sortable: false,
     },

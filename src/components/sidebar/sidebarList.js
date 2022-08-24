@@ -1,10 +1,11 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import { FaUserFriends } from 'react-icons/fa'
 import { MdAddCircleOutline } from 'react-icons/md'
 import { BiUserCircle } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
 import { home } from '../../store/action'
+import { getAuth, signOut } from 'firebase/auth'
 
 const navStyle = {
   width: 300,
@@ -35,10 +36,27 @@ const navLink = {
 
 export default function SidebarList() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { toggle_state } = useSelector(state => state.home);
   const toggleMenu = () => {
     // if toggle false set to true and if ture set to false
     !toggle_state ? dispatch(home.setHomeStore('SET_TOGGLE', true))  : dispatch(home.setHomeStore('SET_TOGGLE', false))
+  }
+
+  // handle logout
+  const handleLogout = () => {
+    toggleMenu();
+    try {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        dispatch(home.setLogout())
+        history.push('/')
+      }).catch((error) => {
+        console.log('error', error)
+      });
+    } catch (error) {
+      console.log('error', error)
+    }
   }
   return (
     <div className='nav-wrap'>
@@ -66,7 +84,7 @@ export default function SidebarList() {
                 </NavLink>
               </li>
               <li>
-                <div className="nav-link-wrap" onClick={() => toggleMenu()}>
+                <div className="nav-link-wrap" onClick={() => handleLogout()}>
                   <div style={navLink}>
                     <BiUserCircle /> 
                     <span className='nav-text'>Logout</span>

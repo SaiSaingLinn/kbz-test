@@ -91,6 +91,10 @@ button:disabled {
   width: 100%;
 }
 
+.form-control.error {
+  border: 2px solid #dc3545;
+}
+
 .react-datepicker-wrapper .form-control {
   width: initial;
 }
@@ -204,6 +208,25 @@ button:disabled {
   margin-left: 0 !important;
 }
 
+.login-input-group .form-control {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+}
+
+.login-input-group.error .input-group-icon {
+  border: 2px solid #dc3545;
+  border-right-color: #ced4da;
+}
+
+.login-input-group.error .form-control {
+  border-left-color: transparent;
+}
+
 /* input group media query */
 @media (max-width: 1199px) {
   .input-group {
@@ -229,6 +252,13 @@ button:disabled {
     flex-direction: row;
     transform: none;
     margin-top: 10px;
+  }
+  .login-input-group {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+  .login-input-group .form-control {
+    width: 100%;
   }
 }
 
@@ -295,6 +325,16 @@ button:disabled {
   padding-right: 5px !important;
 }
 
+.rdt_Pagination button {
+  border-radius: 0;
+}
+
+@media (max-width: 1199px) {
+  .rdt_Pagination span {
+    display: none;
+  }
+}
+
 /* date filter style */
 .date {
   display: flex;
@@ -310,7 +350,7 @@ button:disabled {
   margin-left: 10px;
 }
 
-/* input group media query */
+/* date media query */
 @media (max-width: 1199px) {
   .date {
     flex-direction: column;
