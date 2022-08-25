@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { useHistory } from 'react-router-dom'
@@ -17,7 +17,9 @@ export default function Home() {
     const fetchData = async () => {
       let list = [];
       try {
-        const querySnapshot = await getDocs(collection(db, "customers"));
+        const q = query(collection(db, "customers"), orderBy("timeStamp", "desc"));
+        // const querySnapshot = await getDocs(collection(db, "customers"));
+        const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           list.push({ id: doc.id, ...doc.data() });
         });

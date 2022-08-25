@@ -39,7 +39,13 @@ export default function AddCustomer() {
         console.log(err);
       }
     };
-    fetchData();
+    if (id !== null) {
+      fetchData()
+    } else {
+      setData(null)
+      setPhotoURL("")
+      setGender("Male")
+    }
   }, [id]);
 
   // upload photo
