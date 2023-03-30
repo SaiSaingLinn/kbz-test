@@ -84,6 +84,14 @@ export default function SidebarList() {
                 </NavLink>
               </li>
               <li>
+                <NavLink to="/familyClaim" className="nav-link-wrap" onClick={() => toggleMenu()}>
+                  <div style={navLink}>
+                    <MdAddCircleOutline /> 
+                    <span className='nav-text'>Family Claim</span>
+                  </div>
+                </NavLink>
+              </li>
+              <li>
                 <div className="nav-link-wrap" onClick={() => handleLogout()}>
                   <div style={navLink}>
                     <BiUserCircle /> 
